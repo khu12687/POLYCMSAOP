@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+	<select id="list" resultType="Board">
+		SELECT * FROM board_master
+	</select>
+	
+	<insert id="add">
+		INSERT INTO board_master
+		VALUES (BOARD_MASTER_SEQ.nextval, #{subject}, #{reply}, #{attach}, #{secret}, #{permission})
+		
+		<selectKey resultType="Long" keyProperty="boardId" order="AFTER">
+			SELECT BOARD_MASTER_SEQ.currval FROM DUAL		
+		</selectKey>
+	</insert>
+	
+	<select id="item" resultType="Board">
+		SELECT * FROM board_master
+		WHERE board_id=#{boardId}
+	</select>
+	
+	<update id="update">
+		UPDATE board_master
+		SET subject=#{subject}, reply=#{reply}, attach=#{attach}, secret=#{secret}, permission=#{permission}
+		WHERE board_id=#{boardId}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM board_master
+		WHERE board_id=#{boardId}
+	</delete>
+	
+	<update id="create_board">
+		CREATE TABLE board_${boardId} (
+			article_id NUMBER NOT NULL, /* 글번호 */
+			subject VARCHAR2(128) NOT NULL, /* 제목 */
+			contents CLOB, /* 내용 */
+			reg_date DATE NOT NULL, /* 등록일시 */
+			edit_date DATE, /* 변경일시 */
+			view_count NUMBER DEFAULT 0, /* 조회수 */
+			good_count NUMBER DEFAULT 0, /* 좋아요 */
+			bad_count NUMBER DEFAULT 0, /* 싫어요 */
+			
+			CONSTRAINT PK_board_${boardId}	PRIMARY KEY (article_id)
+		)
+	</update>
+	
+	<update id="delete_board">
+		DROP TABLE board_${boardId}
+	</update>
+	
+	<update id="create_board_seq">
+		CREATE SEQUENCE BOARD_${boardId}_SEQ
+	</update>
+	
+	<update id="delete_board_seq">
+		DROP SEQUENCE BOARD_${boardId}_SEQ
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
